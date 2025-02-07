@@ -15,12 +15,12 @@ The **Abroad Scholarship Management System** is a full-stack web application des
      - **University-first Preference:** Based on the student's academic record, the IT faculty is assigned according to the chosen university.
      - **Faculty-first Preference:** The system checks available seats for the chosen faculty across the three participating universities.
 
-2. **Admin Dashboard:**
+<!-- 2. **Admin Dashboard:**
    - Secure login for administrators.
    - View, filter, and search student applications.
    - Approve or reject applications manually.
    - Real-time update of available seats upon approval of applications.
-   - Dashboard insights on application statistics.
+   - Dashboard insights on application statistics. -->
 
 3. **Database Integration:**
    - All student applications and university data are stored and managed in **MongoDB**.
