@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from "react-hook-form";
-
+import { useNavigate } from 'react-router-dom';
 const Login = () => {
+     const navigate = useNavigate()
+
      const {
           register,
           handleSubmit,
@@ -9,7 +11,30 @@ const Login = () => {
           formState: { errors },
      } = useForm();
 
-     const onSubmit = (data) => console.log(data);
+     const onSubmit = async (data) => {
+          let result = await fetch("http://localhost:3000/login", {
+               method: "POST",
+               headers: {
+                    "Content-Type": "application/json"
+               },
+               body: JSON.stringify(data)
+          });
+
+          // Convert the response to JSON
+          const responseData = await result.json();
+
+          if (responseData.name) {
+               localStorage.setItem("Applicants", JSON.stringify(responseData));
+               console.log("User Logged in successfully", responseData);
+          } else {
+               console.log(responseData.error || "Please enter correct details");
+          }
+     }
+     const auth = localStorage.getItem("Applicants")
+     if (auth) {
+          navigate("/")
+     }
+
 
      // Watch password to validate confirm password
      const password = watch("password");
@@ -21,7 +46,7 @@ const Login = () => {
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
                          {/* Name Field */}
-                         <div>
+                         {/* <div>
                               <label className="block text-gray-700">Name</label>
                               <input
                                    type="text"
@@ -39,7 +64,7 @@ const Login = () => {
                                    className="w-full px-4 py-2 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                               />
                               {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
-                         </div>
+                         </div> */}
 
                          {/* Email Field */}
                          <div>
@@ -73,10 +98,10 @@ const Login = () => {
                                              value: 8,
                                              message: "Password must be at least 8 characters long",
                                         },
-                                        pattern: {
-                                             value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                                             message: "Password must include uppercase, lowercase, number, and special character",
-                                        },
+                                        // pattern: {
+                                        //      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                                        //      message: "Password must include uppercase, lowercase, number, and special character",
+                                        // },
                                    })}
                                    className="w-full px-4 py-2 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                               />

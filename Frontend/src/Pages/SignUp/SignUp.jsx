@@ -1,7 +1,10 @@
-import React from 'react';
+
+import React,{ useEffect} from 'react';
 import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -9,7 +12,34 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => console.log(data);
+
+  useEffect(() => {
+    const auth = localStorage.getItem("Applicants")
+if(auth) {
+  navigate("/")
+}
+
+  }, [])
+  
+  const onSubmit = async (data) =>{
+    try {
+      let result  = await fetch("http://localhost:3000/signUp" , {
+        method : "POST",
+        headers : {
+          'Content-Type': 'application/json',
+        },
+        body : JSON.stringify(data)
+      })
+      result = await result.json()
+      localStorage.setItem("Applicants" , JSON.stringify(result))
+      console.log(result);
+      navigate("/")
+      
+    } catch (error) {
+      console.log(error);
+    }
+  } 
+  
 
   // Watch password to validate confirm password
   const password = watch("password");
@@ -73,10 +103,10 @@ const SignUp = () => {
                   value: 8,
                   message: "Password must be at least 8 characters long",
                 },
-                pattern: {
-                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                  message: "Password must include uppercase, lowercase, number, and special character",
-                },
+                // pattern: {
+                //   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                //   message: "Password must include uppercase, lowercase, number, and special character",
+                // },
               })}
               className="w-full px-4 py-2 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
