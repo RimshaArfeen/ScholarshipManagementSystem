@@ -1,5 +1,5 @@
 
-import React,{ useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 
@@ -12,35 +12,34 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
-
-  useEffect(() => {
-    const auth = localStorage.getItem("Applicants")
-if(auth) {
-  navigate("/")
-}
-
-  }, [])
-  
-  const onSubmit = async (data) =>{
+  const onSubmit = async (data) => {
     try {
-      let result  = await fetch("http://localhost:3000/signUp" , {
-        method : "POST",
-        headers : {
+      let result = await fetch("http://localhost:3000/signup", {
+        method: "POST",
+        headers: {
           'Content-Type': 'application/json',
         },
-        body : JSON.stringify(data)
-      })
-      result = await result.json()
-      localStorage.setItem("Applicants" , JSON.stringify(result))
-      console.log(result);
-      navigate("/")
-      
-    } catch (error) {
-      console.log(error);
-    }
-  } 
+        body: JSON.stringify(data)
+      });
   
-
+      result = await result.json();
+      console.log("API Response:", result); // Debugging: Check response structure
+  
+      if (result.result && result.auth) {
+        localStorage.setItem("Applicants", JSON.stringify(result.result)); 
+        localStorage.setItem("token", result.auth);
+        console.log("Signed up successfully", result);
+        navigate("/login");
+      } else {
+        console.error("Invalid API response format:", result);
+        alert("Invalid response from server. Check console for details.");
+      }
+    } catch (error) {
+      console.log("Sign up error:", error);
+      alert("Encountered an error while signing up: " + error.message);
+    }
+  };
+  
   // Watch password to validate confirm password
   const password = watch("password");
 
@@ -49,7 +48,7 @@ if(auth) {
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md mt-20">
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">Sign Up</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          
+
           {/* Name Field */}
           <div>
             <label className="block text-gray-700">Name</label>

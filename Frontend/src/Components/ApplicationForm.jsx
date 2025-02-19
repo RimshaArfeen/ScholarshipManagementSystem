@@ -2,41 +2,82 @@
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
+import {
+     lowEligibilityField,
+     mediumEligibilityField,
+     highEligibilityField,
+     qualifications
+} from './EligibilityCriteria';
 
 const ApplicationForm = () => {
      const [step, setStep] = useState(1);
+     const [eligiblity, setEligiblity] = useState("")
+     const [status, setStatus] = useState(null)
      const navigate = useNavigate();
 
      const {
           register,
           handleSubmit,
+          getValues,
           formState: { errors },
      } = useForm();
+
      const onSubmit = async (data) => {
-          if (step === 1) {
-               setStep(2); // Move to the second step
+          if (step === 1 || step === 2) {
+               setStep(step + 1);
           } else {
                console.log("Form Data Submitted:", data);
-               // You can add form submission logic here
                let result = await fetch("http://localhost:3000/applicationForm", {
                     method: "POST",
                     headers: {
                          "Content-Type": "application/json"
                     },
                     body: JSON.stringify(data)
+               });
 
-               })
-               result = await result.json()
-               localStorage.setItem("StudentData", JSON.stringify(result))
-               console.log(result);
-               alert("your Data has been submitted")
-               navigate("/profile")
-
+               result = await result.json();
+               setStatus(data.status);
+               console.log(status);
+               
+               localStorage.setItem("StudentData", JSON.stringify(result));
+               console.log("Data saved in MongoDb : ", result);
+               alert("Your data has been submitted!");
+               navigate("/");
           }
      };
 
+     const handleScholarship = () => {
+          const Percentage = getValues("percentage");
+          const scholarshipOption = getValues("scholarship");
+
+          console.log("Your percentage is:", Percentage);
+          console.log("Scholarship selected:", scholarshipOption);
+
+          if (!Percentage) {
+               console.log("Please enter your percentage before selecting a scholarship.");
+               return;
+          }
+
+          if (scholarshipOption === "byFaculty" || scholarshipOption === "byUniversity") {
+               if (Percentage >= 80 && Percentage < 85) {
+                    setEligiblity("low");
+                    console.log("Eligibility set to low");
+               } else if (Percentage >= 85 && Percentage < 90) {
+                    setEligiblity("medium");
+                    console.log("Eligibility set to medium");
+               } else if (Percentage >= 90) {
+                    setEligiblity("high");
+                    console.log("Eligibility set to high");
+               } else {
+                    console.log("Percentage does not meet scholarship criteria.");
+                    setEligiblity(null); // Reset eligibility if criteria are not met
+               }
+          }
+     };
+
+
      const handleBack = () => {
-          setStep(1); // Go back to the first step
+          setStep(step - 1); // Go back to the previous step
      };
 
      return (
@@ -250,14 +291,12 @@ const ApplicationForm = () => {
                                                        className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
                                                        {...register('qualification', { required: 'Qualification is required' })}
                                                   >
-                                                       <option value="" disabled selected>
-                                                            Select your highest qualification
-                                                       </option>
-                                                       <option value="high-school">High School</option>
-                                                       <option value="bachelors">Bachelor's Degree</option>
-                                                       <option value="masters">Master's Degree</option>
-                                                       <option value="phd">PhD</option>
-                                                       <option value="other">Other</option>
+                                                       {qualifications.map((item, index) => (
+
+                                                            <option key={index} value={item.value} disabled={item.disabled} selected={item.selected}>
+                                                                 {item.label}                                                       </option>
+                                                       ))}
+
                                                   </select>
                                                   {errors.qualification && <span>{errors.qualification.message}</span>}
                                              </div>
@@ -280,20 +319,19 @@ const ApplicationForm = () => {
                                              </div>
                                         </div>
 
-                                        {/* Last CGPA/Percentage */}
+                                        {/* Last percentage/Percentage */}
                                         <div className="w-full p-2 md:w-1/2">
                                              <div className="relative">
-                                                  <label htmlFor="lastCgpa" className="text-sm font-medium text-gray-700 uppercase">
-                                                       Last CGPA/Percentage
+                                                  <label htmlFor="lastpercentage" className="text-sm font-medium text-gray-700 uppercase">
+                                                       Last percentage/Percentage
                                                   </label>
                                                   <input
                                                        type="text"
-                                                       id="lastCgpa"
                                                        className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
-                                                       {...register('cgpa', { required: 'CGPA is required' })}
-                                                       placeholder="e.g., 3.8 CGPA or 85%"
+                                                       {...register('percentage', { required: 'percentage is required' })}
+                                                       placeholder="e.g., 3.8 percentage or 85%"
                                                   />
-                                                  {errors.cgpa && <span>{errors.cgpa.message}</span>}
+                                                  {errors.percentage && <span>{errors.percentage.message}</span>}
                                              </div>
                                         </div>
 
@@ -331,26 +369,132 @@ const ApplicationForm = () => {
                                              </div>
                                         </div>
 
-                                        {/* Scholarship */}
-                                        <div className="w-full p-2 md:w-1/2">
+
+                                        {/*  Button */}
+                                        <div className="flex justify-between mt-4 w-full">
+                                             <button
+                                                  type="button"
+                                                  onClick={handleBack}
+                                                  className="w-1/3 rounded-lg bg-gray-300 px-8 py-3 text-lg font-semibold text-gray-700 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                             >
+                                                  Back
+                                             </button>
+
+                                             <button
+                                                  type="submit"
+                                                  className="mt-4 w-full rounded-lg bg-indigo-600 px-8 py-3 text-lg font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                             >
+                                                  Next
+                                             </button>
+                                        </div>
+
+                                   </div>
+
+                              )}
+
+                              {step == 3 && (
+                                   <div className="-m-2 flex flex-wrap">
+                                        {/* Scholarship Selection */}
+                                        <div className="w-full p-2">
                                              <div className="relative">
                                                   <label htmlFor="scholarship" className="text-sm font-medium text-gray-700 uppercase">
                                                        Choose Scholarship
                                                   </label>
                                                   <select
-                                                       id="scholarship"
+                                                       onClick={handleScholarship}
                                                        className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none capitalize"
                                                        {...register('scholarship', { required: true })}
                                                   >
                                                        <option value="" disabled selected>
-                                                            Select Scholarship by Faculty or by university
+                                                            Select Scholarship by Faculty or by University
                                                        </option>
                                                        <option value="byFaculty">by Faculty</option>
                                                        <option value="byUniversity">by University</option>
                                                   </select>
-                                                  {errors.scholarship && <span>This field is required</span>}
+                                                  {errors.scholarship && <span className="text-red-500 text-sm">This field is required</span>}
                                              </div>
                                         </div>
+
+                                        {/* Eligibility Selection */}
+                                        {eligiblity === "low" && (
+                                             <div className="w-full p-2">
+                                                  <div className="relative">
+                                                       <label htmlFor="lowEligibilityField" className="text-sm font-medium text-gray-700 uppercase">
+                                                            Choose Scholarship
+                                                       </label>
+                                                       <select
+                                                            className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none capitalize"
+                                                            {...register('lowEligibilityField', { required: true })}
+                                                       >
+                                                            <option value="" disabled selected>
+                                                            Select Field
+                                                            </option>
+                                                            {lowEligibilityField.map((item, index) => (
+
+                                                                 <option value={`${item.field} , ${item.university}`}>{item.field} , {item.university}</option>
+                                                            ))}
+
+                                                       </select>
+                                                       {errors.lowEligibilityField && <span className="text-red-500 text-sm">This field is required</span>}
+                                                  </div>
+                                             </div>
+
+                                        )}
+
+                                        {eligiblity === "medium" && (
+                                             <div className="w-full p-2">
+                                                  <div className="relative">
+                                                       <label htmlFor="mediumEligibilityField" className="text-sm font-medium text-gray-700 uppercase">
+                                                            Choose Scholarship
+                                                       </label>
+                                                       <select
+                                                            className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none capitalize"
+                                                            {...register('mediumEligibilityField', { required: true })}
+                                                       >
+                                                            <option value="" disabled selected>
+                                                                 Select Field
+                                                            </option>
+                                                            {mediumEligibilityField.map((item, index) => (
+
+                                                                 <option value={`${item.field} , ${item.university}`}>{item.field} , {item.university}</option>
+                                                            ))}
+
+                                                       </select>
+                                                       {errors.mediumEligibilityField && <span className="text-red-500 text-sm">This field is required</span>}
+                                                  </div>
+                                             </div>
+
+                                        )}
+
+                                        {eligiblity === "high" && (
+                                             <div className="w-full p-2">
+                                                  <div className="relative">
+                                                       <label htmlFor="highEligibilityField" className="text-sm font-medium text-gray-700 uppercase">
+                                                            Choose Scholarship
+                                                       </label>
+                                                       <select
+                                                            className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none capitalize"
+                                                            {...register('highEligibilityField', { required: true })}
+                                                       >
+                                                            <option value="" disabled selected>
+                                                            Select Field
+                                                            </option>
+                                                            {highEligibilityField.map((item, index) => (
+
+                                                                 <option value={`${item.field} , ${item.university}`}>{item.field} , {item.university}</option>
+                                                            ))}
+
+                                                       </select>
+                                                       {errors.highEligibilityField && <span className="text-red-500 text-sm">This field is required</span>}
+                                                  </div>
+                                             </div>
+
+                                        )}
+
+                                        {eligiblity === null && (
+                                             <p className="mx-auto text-lg text-red-800  leading-relaxed lg:w-2/3">The Percentage dosen't match Scholarship Criteria</p>
+                                        )
+                                        }
 
                                         {/* Additional Information */}
                                         <div className="w-full p-2">
@@ -387,7 +531,10 @@ const ApplicationForm = () => {
 
                               )}
 
+
                          </form>
+                         {status && <p>Status: {status}</p>}
+
                     </div>
                </div>
           </section>
