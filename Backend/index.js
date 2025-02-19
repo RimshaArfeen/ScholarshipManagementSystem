@@ -5,6 +5,10 @@ import mongoose from 'mongoose';
 import User from "./Schema/Applicant.js";  // Ensure correct path & extension
 import StudentInfo from "./Schema/StudentInfo.js";
 import cors from "cors"
+import JWT from "jsonwebtoken"
+import Admin from "./Schema/AdminSchema.js";
+
+const jwtKey = "jwtSecrectKey"
 const PORT = 3000;
 
 // Connect to MongoDB
@@ -25,18 +29,28 @@ app.get('/', (req, res) => {
 });
 
 // POST route for user signup
-app.post('/signUp', async (req, res) => {
+app.post('/signup', async (req, res) => {
   try {
-    let user = new User(req.body)
-    let result = await user.save()
-    result = result.toObject()
-    delete result.password
-    res.json({ message: 'User signed up successfully', result });
+    let user = new User(req.body);
+    let result = await user.save();
+    result = result.toObject();
+    delete result.password;
+
+    // Generate JWT token before sending response
+    JWT.sign({ result }, jwtKey, { expiresIn: "5000s" }, (err, token) => {
+      if (err) {
+        return res.status(500).json({ message: "Something went wrong with token generation" });
+      } 
+      
+      res.json({
+        message: 'User signed up successfully',
+        result,
+        auth: token
+      });
+    });
+
   } catch (error) {
-    res.send(`Encountering error , Error : ${error}`)
-    res.status(500).send(`Encountering error, Error: ${error.message}`);
-
-
+    return res.status(500).json({ message: "Encountering error", error: error.message });
   }
 });
 
@@ -47,7 +61,17 @@ app.post("/login", async (req, res) => {
     let user = await User.findOne({ email, password }).select("-password");
     
     if (user) {
-      res.json(user);  // Send user data as JSON
+      JWT.sign({user} , jwtKey , {expiresIn : "2h"} , (err, token) => {
+        if (err) {
+          res.send("Something went wrong")
+
+        } else {
+          res.json({
+            user, auth:token
+          })
+        }
+      }
+      )
     } else {
       res.json({ error: "No User Found" });  // Send error message as JSON
     }
@@ -56,6 +80,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
+//Form for scholarship
 app.post("/applicationForm", async (req, res) => {
   try {
     // Create a new instance of the StudentInfo model
@@ -70,6 +95,53 @@ app.post("/applicationForm", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+
+//User Login Profile route
+app.get("/profile", verifyToken, (req, res) => {
+  JWT.verify(req.token, jwtKey, (err, authData) => {
+    if (err) {
+      res.status(403).json({ result: "Please provide a valid token" });
+    } else {
+      res.json({ authData });
+    }
+  });
+});
+
+//Admin page to view the the applications
+app.get("/adminPg", async (req, res) => {
+  try {
+    let studentData = await StudentInfo.find(); // Fetch data
+    res.json({studentData}); // Send response as JSON
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+});
+
+//Accepting and rejecting applications
+app.put("/adminPg/:id" , async(req, res) => {
+  const { id } = req.params;
+  const { status } = req.body; // 'Approved' or 'Rejected'
+
+  const updApplication =  await StudentInfo.findByIdAndUpdate(id, {status} , {new : true})
+  if (res.status(200)) {
+    res.json({ message: `Application ${status.toLowerCase()} successfully`, updApplication });
+    
+  }
+})
+
+// Middleware to verify token
+function verifyToken(req, res, next) {
+  let bearerHeader = req.headers['authorization'];
+
+  if (bearerHeader) {
+    let token = bearerHeader.split(" ")[1]; // Extract token
+    req.token = token;
+    next(); // Call next middleware
+  } else {
+    res.status(403).json({ message: "Please provide a valid token" });
+  }
+}
+
 
 // Start the server
 app.listen(PORT, () => {

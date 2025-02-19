@@ -69,17 +69,23 @@ const studentSchema = new mongoose.Schema(
                type: String,
                required: true
           },
-          cgpa: {
+          percentage: {
                type: Number,
                required: true
           },
           scholarship: {
                type: String,
                required: true
-          }
+          },
 
+          lowEligibilityField: { type: String },
+          mediumEligibilityField: { type: String },
+          highEligibilityField: { type: String },
+          status: { type: String , 
+               default: "PENDING"
+          },
 
      })
 
-     const StudentInfo = model('StudentInfo', studentSchema);
-     export default StudentInfo;
+const StudentInfo = model('StudentInfo', studentSchema);
+export default StudentInfo;
