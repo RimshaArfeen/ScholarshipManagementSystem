@@ -1,7 +1,10 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -9,8 +12,34 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => console.log(data);
-
+  const onSubmit = async (data) => {
+    try {
+      let result = await fetch("http://localhost:3000/signup", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+  
+      result = await result.json();
+      console.log("API Response:", result); // Debugging: Check response structure
+  
+      if (result.result && result.auth) {
+        localStorage.setItem("Applicants", JSON.stringify(result.result)); 
+        localStorage.setItem("token", result.auth);
+        console.log("Signed up successfully", result);
+        navigate("/login");
+      } else {
+        console.error("Invalid API response format:", result);
+        alert("Invalid response from server. Check console for details.");
+      }
+    } catch (error) {
+      console.log("Sign up error:", error);
+      alert("Encountered an error while signing up: " + error.message);
+    }
+  };
+  
   // Watch password to validate confirm password
   const password = watch("password");
 
@@ -19,10 +48,10 @@ const SignUp = () => {
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md mt-20">
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">Sign Up</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          
+
           {/* Name Field */}
           <div>
-            <label className="block text-gray-700">Name</label>
+            <label className="block text-custom">Name</label>
             <input
               type="text"
               {...register("name", {
@@ -36,14 +65,14 @@ const SignUp = () => {
                   message: "Maximum length is 20 characters",
                 },
               })}
-              className="w-full px-4 py-2 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
           </div>
 
           {/* Email Field */}
           <div>
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-custom">Email</label>
             <input
               type="email"
               {...register("email", {
@@ -57,14 +86,14 @@ const SignUp = () => {
                   message: "Invalid email format. Must contain '@' and domain",
                 },
               })}
-              className="w-full px-4 py-2 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
           </div>
 
           {/* Password Field */}
           <div>
-            <label className="block text-gray-700">Password</label>
+            <label className="block text-custom">Password</label>
             <input
               type="password"
               {...register("password", {
@@ -73,19 +102,19 @@ const SignUp = () => {
                   value: 8,
                   message: "Password must be at least 8 characters long",
                 },
-                pattern: {
-                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                  message: "Password must include uppercase, lowercase, number, and special character",
-                },
+                // pattern: {
+                //   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                //   message: "Password must include uppercase, lowercase, number, and special character",
+                // },
               })}
-              className="w-full px-4 py-2 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
           </div>
 
           {/* Confirm Password Field */}
           <div>
-            <label className="block text-gray-700">Confirm Password</label>
+            <label className="block text-custom">Confirm Password</label>
             <input
               type="password"
               {...register("confirmPassword", {
@@ -93,7 +122,7 @@ const SignUp = () => {
                 validate: (value) =>
                   value === password || "Passwords do not match",
               })}
-              className="w-full px-4 py-2 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             {errors.confirmPassword && (
               <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
@@ -109,7 +138,7 @@ const SignUp = () => {
           </button>
         </form>
 
-        <p className="text-center text-gray-600 mt-4">
+        <p className="text-center text-custom mt-4">
           Already have an account?{" "}
           <a href="/login" className="text-blue-600 hover:underline">
             Log In

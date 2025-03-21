@@ -1,0 +1,36 @@
+/* 
+Dark Mode Theme (Tech & Innovation)
+Background: #121212 (Dark Grey)
+Text: #E0E0E0 (Light Grey)
+Headings: #1E88E5 (Bright Blue)
+Buttons/CTA: #FF4081 (Pink)
+Underline/Accent: #90CAF9 (Soft Blue)
+
+Teal & Grey (Modern & Calm)
+Background: #CFD8DC (Light Grey)
+Text: #009688 (Teal)
+Headings: #00695C (Dark Teal)
+Buttons/CTA: #FFEB3B (Bright Yellow)
+Underline/Accent: #00ACC1 (Cyan)
+
+*/
+
+html, body {
+     width: 100vw;
+     overflow-x: hidden;
+ }
+ 
+ * {
+     box-sizing: border-box;
+ }
+ 
+ body {
+     margin: 0;
+     padding: 0;
+ }
+ 
+ .container {
+     max-width: 100%;
+     overflow-x: hidden;
+ }
+ 

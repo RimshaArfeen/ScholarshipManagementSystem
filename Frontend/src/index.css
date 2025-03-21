@@ -1,1 +1,60 @@
 @import "tailwindcss";
+
+html, body {
+     width: 100vw;
+     overflow-x: hidden;
+ }
+ 
+ * {
+     box-sizing: border-box;
+ }
+ 
+ body {
+     margin: 0;
+     padding: 0;
+ }
+ 
+ .container {
+     max-width: 100%;
+     overflow-x: hidden;
+ }
+ 
+/* Teal & Grey (Modern & Calm)
+Background: #CFD8DC (Light Grey)
+Text: #009688 (Teal)
+Headings: #00695C (Dark Teal)
+Buttons/CTA: #FFEB3B (Bright Yellow)
+Underline/Accent: #00ACC1 (Cyan) */
+
+.bg-custom {
+     background-color: #CFD8DC;
+}
+
+.bg-teal{
+     background-color: #00695C;
+}
+
+.text-custom {
+     color: #009688;
+}
+
+.heading-custom {
+     color: #00695C;
+}
+
+.button-custom {
+     background-color: #dda201;
+}
+
+.underline-custom {
+     background-color: #00ACC1;
+     color: #00ACC1;
+}
+
+.border-custom {
+     border-color: #00ACC1;
+}
+
+.col-wid{
+     column-width: 25%;
+}
