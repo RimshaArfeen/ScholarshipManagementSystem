@@ -1,10 +1,24 @@
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
+const PrivateComp = () => {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("Applicants"));
+  const location = useLocation();
 
-const PrvtComp = () => {
-     const auth = localStorage.getItem("Applicants")
-     return (auth ? <Outlet /> : <Navigate to="signUp"/>)
-}
+  if (!token || !user) {
+    return <Navigate to="/" replace />;
+  }
 
-export default PrvtComp;
+  if (location.pathname.endsWith("/admin") && user.role !== "admin") {
+    return <Navigate to="/" replace />;
+  }
+
+  if (location.pathname.endsWith("/student") && user.role !== "student") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+};
+
+
+export default PrivateComp;

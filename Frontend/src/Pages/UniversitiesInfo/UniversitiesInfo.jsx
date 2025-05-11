@@ -15,10 +15,6 @@ const UniversitiesInfo = () => {
               <div className=" h-64 overflow-hidden">
                 <img alt="content" className="object-cover object-center h-full w-full" src={item.imgUrl} />
               </div>
-              
-
-
-
               <NavLink to={`/UniDetails/${item.name}`}
                 className="text-xl w-full font-medium title-font heading-custom mt-3 text-center" >{item.name}</NavLink>
             </div>
@@ -61,7 +57,7 @@ export const UniDetails = () => {
         <h1 className="mb-6 text-4xl font-bold leading-none md:text-5xl lg:text-6xl">{university.name}</h1>
 
         <div className="flex justify-center mt-6">
-          <a href="#" className="inline-flex items-center py-3 px-6 text-lg font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+          <a href="#" className="inline-flex items-center py-3 px-6 text-lg font-medium text-white bg-teal-700 rounded-lg hover:bg-teal-800 focus:ring-4 focus:ring-teal-300 dark:focus:ring-teal-900">
             Get started
             <svg className="w-4 h-4 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
@@ -75,7 +71,7 @@ export const UniDetails = () => {
           {university.contact.map((item, index) => (
             <div key={index}  className="p-4 lg:w-1/3 md:w-3/4 mx-auto w-full">
               <div className="flex items-center bg-[rgba(0,0,0,0.4)] rounded-lg p-6">
-                <div className="material-icons flex items-center justify-center rounded-full bg-blue-100 text-blue-600 p-2 px-3 ">
+                <div className="material-icons flex items-center justify-center rounded-full bg-blue-100 text-teal-800 p-2 px-3 ">
                   <span className=" text-3xl">
                     {item.icon}
                   </span>
@@ -142,15 +138,15 @@ export const UniDetails = () => {
 
               
 
-<ol className="relative w-full md:w-1/2 lg:w-[46%] heading-custom border-s-[0.6px] border-blue-500 dark:border-gray-700 dark:text-gray-400 text-left mx-2 my-3"> 
+<ol className="relative w-full md:w-1/2 lg:w-[46%] heading-custom border-s-[0.6px] border-teal-500 dark:border-gray-700 dark:text-gray-400 text-left mx-2 my-3"> 
 <h2 className="text-2xl font-bold tracking-tight title-font heading-custom m-3 mt-0 mb-0 ">Eligibility Criteria</h2>
 <hr className=' h-[0.6px] w-3/4 md:w-[50%] text-amber-600 mt-1 mb-2 ml-4' />
 
 {item.eligibilityCriteria.map((item, index) => (
                  
     <li key={index}  className="mb-10 ms-6">            
-        <span className="absolute flex items-center justify-center p-4 w-8 h-8 bg-blue-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-blue-900">
-            <span className={`material-icons text-2xl p-2 rounded-full border-[0.6px] border-blue-400 bg-blue-200 text-custom `}>
+        <span className="absolute flex items-center justify-center p-4 w-8 h-8 bg-teal-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-teal-900">
+            <span className={`material-icons text-2xl p-2 rounded-full border-[0.6px] border-teal-400 bg-blue-200 text-custom `}>
             {item.icon}
             </span>
         </span>
@@ -196,7 +192,7 @@ export const UniDetails = () => {
           ))}
           <div className="flex flex-col md:flex-row items-center md:items-start mx-auto mt-8  bg-gray-300 w-full py-14 px-8 ">
             <h1 className="flex-grow sm:pr-16 font-semibold text-3xl title-font  heading-custom tracking-wider">Unlock Your Future – Take the First Step Today!</h1>
-            <NavLink to='/applicationInfo' className=" text-2xl w-full md:w-1/3 lg:w-1/4 flex-shrink-0 text-white bg-teal  border-0 py-4 px-16 focus:outline-none hover:bg-teal-600 rounded md:text-lg mt-10 md:mt-0 uppercase ">Apply Now </NavLink>
+            <NavLink to='/applicationInfo/student' className=" text-2xl w-full md:w-1/3 lg:w-1/4 flex-shrink-0 text-white bg-teal  border-0 py-4 px-16 focus:outline-none hover:bg-teal-600 rounded md:text-lg mt-10 md:mt-0 uppercase ">Apply Now </NavLink>
           </div>
 
 
@@ -212,4 +208,3 @@ export const UniDetails = () => {
 
 export default UniversitiesInfo;
 
-//       <img className="object-cover object-center rounded" alt="hero" src={university.imgUrl}/>

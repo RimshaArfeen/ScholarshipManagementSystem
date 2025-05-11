@@ -12,14 +12,15 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data, role) => {
     try {
+      const finalData = { ...data, role }
       let result = await fetch("http://localhost:3000/signup", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(finalData)
       });
   
       result = await result.json();
@@ -29,7 +30,7 @@ const SignUp = () => {
         localStorage.setItem("Applicants", JSON.stringify(result.result)); 
         localStorage.setItem("token", result.auth);
         console.log("Signed up successfully", result);
-        navigate("/login");
+        navigate("/ ");
       } else {
         console.error("Invalid API response format:", result);
         alert("Invalid response from server. Check console for details.");
@@ -46,7 +47,9 @@ const SignUp = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md mt-20">
-        <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">Sign Up</h2>
+        <h2 className=" w-fit mx-auto  text-center text-2xl font-bold  heading-custom mb-6">Sign Up
+          <div className='h-0.5 w-full bg-amber-600 my-1'></div>
+        </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
           {/* Name Field */}
@@ -65,7 +68,7 @@ const SignUp = () => {
                   message: "Maximum length is 20 characters",
                 },
               })}
-              className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border-customborder-teal-600 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 border-[1px] border-teal-500 text-sm"
             />
             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
           </div>
@@ -86,7 +89,7 @@ const SignUp = () => {
                   message: "Invalid email format. Must contain '@' and domain",
                 },
               })}
-              className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border-customborder-teal-600 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 border-[1px] border-teal-500 text-sm"
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
           </div>
@@ -107,7 +110,7 @@ const SignUp = () => {
                 //   message: "Password must include uppercase, lowercase, number, and special character",
                 // },
               })}
-              className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border-customborder-teal-600 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 border-[1px] border-teal-500 text-sm"
             />
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
           </div>
@@ -122,7 +125,7 @@ const SignUp = () => {
                 validate: (value) =>
                   value === password || "Passwords do not match",
               })}
-              className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border-customborder-teal-600 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 border-[1px] border-teal-500 text-sm"
             />
             {errors.confirmPassword && (
               <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
@@ -132,7 +135,8 @@ const SignUp = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+            onClick={handleSubmit((data) => onSubmit(data, "student"))}
+            className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition"
           >
             Sign Up
           </button>
@@ -140,7 +144,7 @@ const SignUp = () => {
 
         <p className="text-center text-custom mt-4">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">
+          <a href="/ " className="text-teal-600 hover:underline">
             Log In
           </a>
         </p>

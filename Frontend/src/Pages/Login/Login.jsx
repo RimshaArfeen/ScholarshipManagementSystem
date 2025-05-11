@@ -1,158 +1,132 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
+
 const Login = () => {
-     const navigate = useNavigate()
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
 
-     const {
-          register,
-          handleSubmit,
-          watch,
-          formState: { errors },
-     } = useForm();
+  const password = watch("password");
 
-     const onSubmit = async (data) => {
-          try {
-               let result = await fetch("http://localhost:3000/login", {
-                    method: "POST",
-                    headers: {
-                         "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(data)
-               });
-               if (!result.ok) {
-                    throw new Error("Network response was not ok");
+  const onSubmit = async (data, role) => {
+    try {
+      const finalData = { ...data, role };
+      console.log(finalData);
+      
 
-               }
-               // Convert the response to JSON
-               const responseData = await result.json();
+      const result = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(finalData)
+      });
 
-               if (responseData.auth) {
-                    localStorage.setItem("Applicants", JSON.stringify(responseData.user));
-                    localStorage.setItem("token",responseData.auth);
-                    console.log("User Logged in successfully", responseData);
-                    navigate("/")
-               } else {
-                    console.log(responseData.error || "Please enter correct details");
-               }
+      const responseData = await result.json();
+      console.log("Response from server:", responseData); // 👈 See what's returned
 
-          } catch (error) {
-               console.log("Login failed:", error.message);
+      if (responseData.auth && responseData.user.role === role) {
+        localStorage.setItem("Applicants", JSON.stringify(responseData.user));
+        localStorage.setItem("token", responseData.auth);
+        console.log("User Logged in successfully", responseData);
+        if (responseData.user.role === "student") {
+          navigate("/home/student");
+        } else if (responseData.user.role === "admin") {
+          navigate("/adminDashboard");
+        }
+      } else {
+        console.log("Invalid credentials or role mismatch");
+      }
 
-          }
-     }
-         
+    } catch (error) {
+      console.log("Login failed:", error.message);
+    }
+  };
 
+  return (
+    <div className="w-full flex items-center justify-center">
+      <form className="w-full md:w-2/3 lg:w-3/4 space-y-4">
+        {/* Email */}
+        <div>
+          <label className="block text-custom">Email</label>
+          <input
+            type="email"
+            {...register("email", {
+              required: "Email is required",
+              minLength: {
+                value: 4,
+                message: "Minimum length is 4 characters",
+              },
+              pattern: {
+                value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
+                message: "Invalid email format",
+              },
+            })}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none border-custom"
+          />
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+        </div>
 
+        {/* Password */}
+        <div>
+          <label className="block text-custom">Password</label>
+          <input
+            type="password"
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters long",
+              },
+            })}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none border-custom"
+          />
+          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+        </div>
 
-          // Watch password to validate confirm password
-          const password = watch("password");
+        {/* Confirm Password */}
+        <div>
+          <label className="block text-custom">Confirm Password</label>
+          <input
+            type="password"
+            {...register("confirmPassword", {
+              required: "Please confirm your password",
+              validate: (value) =>
+                value === password || "Passwords do not match",
+            })}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none border-custom"
+          />
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+          )}
+        </div>
 
-          return (
-               <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-                    <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md mt-20">
-                         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">Log In</h2>
-                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* Login as Student */}
+        <button
+          type="button"
+          onClick={handleSubmit((data) => onSubmit(data, "student"))}
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+        >
+          Log In As Student
+        </button>
 
-                              {/* Name Field */}
-                              {/* <div>
-                              <label className="block text-custom">Name</label>
-                              <input
-                                   type="text"
-                                   {...register("name", {
-                                        required: "Name is required",
-                                        minLength: {
-                                             value: 4,
-                                             message: "Minimum length is 4 characters",
-                                        },
-                                        maxLength: {
-                                             value: 20,
-                                             message: "Maximum length is 20 characters",
-                                        },
-                                   })}
-                                   className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                              />
-                              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
-                         </div> */}
+        {/* Login as Admin */}
+        <button
+          type="button"
+          onClick={handleSubmit((data) => onSubmit(data, "admin"))}
+          className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
+        >
+          Log In As Admin
+        </button>
+      </form>
+    </div>
+  );
+};
 
-                              {/* Email Field */}
-                              <div>
-                                   <label className="block text-custom">Email</label>
-                                   <input
-                                        type="email"
-                                        {...register("email", {
-                                             required: "Email is required",
-                                             minLength: {
-                                                  value: 4,
-                                                  message: "Minimum length is 4 characters",
-                                             },
-                                             pattern: {
-                                                  value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                                                  message: "Invalid email format. Must contain '@' and domain",
-                                             },
-                                        })}
-                                        className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                   />
-                                   {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
-                              </div>
-
-                              {/* Password Field */}
-                              <div>
-                                   <label className="block text-custom">Password</label>
-                                   <input
-                                        type="password"
-                                        {...register("password", {
-                                             required: "Password is required",
-                                             minLength: {
-                                                  value: 8,
-                                                  message: "Password must be at least 8 characters long",
-                                             },
-                                             // pattern: {
-                                             //      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                                             //      message: "Password must include uppercase, lowercase, number, and special character",
-                                             // },
-                                        })}
-                                        className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                   />
-                                   {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
-                              </div>
-
-                              {/* Confirm Password Field */}
-                              <div>
-                                   <label className="block text-custom">Confirm Password</label>
-                                   <input
-                                        type="password"
-                                        {...register("confirmPassword", {
-                                             required: "Please confirm your password",
-                                             validate: (value) =>
-                                                  value === password || "Passwords do not match",
-                                        })}
-                                        className="w-full px-4 py-2 border-customborder-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                   />
-                                   {errors.confirmPassword && (
-                                        <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
-                                   )}
-                              </div>
-
-                              {/* Submit Button */}
-                              <button
-                                   type="submit"
-                                   className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition uppercase"
-                              >
-                                   Log In
-                              </button>
-                         </form>
-
-                         <p className="text-center text-custom mt-4">
-                              Don't have an account?{" "}
-                              <a href="/signup" className="text-blue-600 hover:underline">
-                                   sign Up
-                              </a>
-                         </p>
-                    </div>
-               </div>
-          );
-     };
-
-     export default Login;
+export default Login;

@@ -1,6 +1,8 @@
-import React from 'react'
+import React from 'react';
 import Slider from "react-slick";
 import { academicPrograms } from './Data';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const AcademicPrograms = () => {
 
@@ -13,8 +15,8 @@ const AcademicPrograms = () => {
     slidesToScroll: 1,
     variableWidth: false,
     autoplay: true,
-    speed: 2000,
-    autoplaySpeed: 2000,
+    speed: 900,
+    autoplaySpeed: 900,
     responsive: [
       {
         breakpoint: 1400, // Large screens
@@ -46,7 +48,7 @@ const AcademicPrograms = () => {
   return (
     <section className="text-gray-600 body-font">
       <div className=" py-14 mx-auto flex flex-wrap justify-between">
-        <div className="md:w-[24%] pr-2">
+        <div className="md:w-[24%] px-4">
           <h2
             data-aos="fade-right" className="md:text-2xl lg:text-3xl text-3xl heading-custom font-medium uppercase tracking-widest title-font mb-2 ">Academic
             <span className='md:text-3xl   lg:text-4xl text-4xl block'>Programs</span>
@@ -92,13 +94,7 @@ const AcademicPrograms = () => {
         </div>
       </div>
     </section>
-    //    <section className="text-gray-900 body-font"> 
-    //    {/* Soft Light Grey Background */}
-    //    <div className="container px-5 py-16 mx-auto">
-
-
-    //    </div>
-    //  </section>
+    
   )
 }
 
