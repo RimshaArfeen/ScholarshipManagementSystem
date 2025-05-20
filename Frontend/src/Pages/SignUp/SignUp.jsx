@@ -30,7 +30,7 @@ const SignUp = () => {
         localStorage.setItem("Applicants", JSON.stringify(result.result)); 
         localStorage.setItem("token", result.auth);
         console.log("Signed up successfully", result);
-        navigate("/ ");
+        navigate("/");
       } else {
         console.error("Invalid API response format:", result);
         alert("Invalid response from server. Check console for details.");

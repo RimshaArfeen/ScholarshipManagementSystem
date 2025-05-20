@@ -52,7 +52,7 @@ const ApplicationForm = () => {
           }
           else {
                try {
-                    const response = await fetch("http://localhost:3000/applicationForm/:id", {
+                    const response = await fetch("http://localhost:3000/applicationForm", {
                          method: "POST",
                          body: formData,
                     });
@@ -63,7 +63,7 @@ const ApplicationForm = () => {
                          alert("Your data has been submitted!");
                          console.log(responseData);
 
-                         navigate("/:id/home");
+                         navigate("/home");
                     } else {
                          const text = await response.text();
                          console.error("Server error:", text);

@@ -14,7 +14,13 @@ const applicantSchema = new Schema({
   password: {
     type: String,
     required: true
-  }
+  }, 
+  role : {
+    type: String,
+    required : true
+  },
+
+
   // Usually, confirmPassword isn't stored in the DB
 });
 
