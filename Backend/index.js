@@ -5,8 +5,14 @@ import mongoose from 'mongoose';
 import User from "./Schema/Applicant.js";  // Ensure correct path & extension
 import StudentInfo from "./Schema/StudentInfo.js";
 import cors from "cors"
+import multer from "multer";
+import fs from "fs"
 import JWT from "jsonwebtoken"
 import Admin from "./Schema/AdminSchema.js";
+import path from "path";
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const jwtKey = "jwtSecrectKey"
 const PORT = 3000;
@@ -23,6 +29,19 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+
+//Apply Multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Adds timestamp to avoid duplicates
+  }
+});
+
+
+const upload = multer({ storage: storage })
 // Basic route for the root URL
 app.get('/', (req, res) => {
   res.send('Hello, this is your custom Node.js backend!');
@@ -49,7 +68,7 @@ app.post('/signup', async (req, res) => {
       });
     });
 
-  } catch (error) {
+  } catch (error) {                                                             
     return res.status(500).json({ message: "Encountering error", error: error.message });
   }
 });
@@ -61,7 +80,7 @@ app.post("/login", async (req, res) => {
     let user = await User.findOne({ email, password }).select("-password");
     
     if (user) {
-      JWT.sign({user} , jwtKey , {expiresIn : "2h"} , (err, token) => {
+      JWT.sign({user} , jwtKey , {expiresIn : "2m"} , (err, token) => {
         if (err) {
           res.send("Something went wrong")
 
@@ -81,21 +100,41 @@ app.post("/login", async (req, res) => {
 });
 
 //Form for scholarship
-app.post("/applicationForm", async (req, res) => {
+app.post("/applicationForm", upload.single("file"), async (req, res) => {
   try {
-    // Create a new instance of the StudentInfo model
-    const student = new StudentInfo(req.body);
-    
-    // Save the data to the database
+    const formFields = req.body;
+    const file = req.file;
+
+    const student = new StudentInfo({
+      ...formFields,
+      documentPath: file?.path || ""
+    });
+
     const result = await student.save();
-    
-    // Send the saved data as a response
-    res.send(result);  // 201 for successful resource creation
+
+    res.status(201).json({ message: "Form submitted successfully", data: result });
+
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
+app.get("/download/:fileName" , (req, res) => {
+  const fileName = req.params.fileName
+  const filePath = path.join(__dirname,"uploads", fileName)
+  try {
+    
+    if (fs.existsSync(filePath)) {
+      res.send(filePath)
+    }
+    else{
+      res.status(404).send("File not found")
+    }
+  } catch (error) {
+    console.log("No file received");
+    
+  }
+})
 //User Login Profile route
 app.get("/profile", verifyToken, (req, res) => {
   JWT.verify(req.token, jwtKey, (err, authData) => {

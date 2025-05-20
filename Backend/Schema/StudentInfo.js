@@ -51,6 +51,10 @@ const studentSchema = new mongoose.Schema(
                type: String,
                required: true
           },
+          documentPath: {
+               type: String,
+               required: true
+          },
 
           // Academic Information
           currentInstitute: {
@@ -78,10 +82,22 @@ const studentSchema = new mongoose.Schema(
                required: true
           },
 
+          byFaculty: {
+               type: String,
+              
+          },
+          
+          byUniversity: {
+               type: String,
+             
+          },
+
           lowEligibilityField: { type: String },
           mediumEligibilityField: { type: String },
           highEligibilityField: { type: String },
-          status: { type: String , 
+
+          status: {
+               type: String,
                default: "PENDING"
           },
 
