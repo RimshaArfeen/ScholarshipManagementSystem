@@ -15,7 +15,7 @@ const SignUp = () => {
   const onSubmit = async (data, role) => {
     try {
       const finalData = { ...data, role }
-      let result = await fetch("http://localhost:3000/signup", {
+      let result = await fetch(`${window.location.origin}/signup`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

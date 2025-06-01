@@ -18,7 +18,7 @@ const Login = () => {
     try {
       const finalData = { ...data, role };
 
-      const result = await fetch("http://localhost:3000/login", {
+      const result = await fetch(`${window.location.origin}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

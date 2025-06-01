@@ -26,7 +26,7 @@ const Profile = () => {
         return;
       }
 
-      let response = await fetch('http://localhost:3000/profile', {
+      let response = await fetch(`${window.location.origin}/profile`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

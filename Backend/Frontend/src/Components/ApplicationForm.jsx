@@ -52,7 +52,7 @@ const ApplicationForm = () => {
           }
           else {
                try {
-                    const response = await fetch("http://localhost:3000/applicationForm", {
+                    const response = await fetch(`${window.location.origin}/applicationForm`, {
                          method: "POST",
                          body: formData,
                     });

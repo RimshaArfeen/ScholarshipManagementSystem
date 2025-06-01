@@ -43,8 +43,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 // Basic route for the root URL
-app.get('/', (req, res) => {
-  res.send('Hello, this is your custom Node.js backend!');
+// app.get('/', (req, res) => {
+//   res.send('Hello, this is your custom Node.js backend!');
+// });
+
+
+app.get("/", (req, res) => {
+  app.use(express.static(path.resolve(__dirname, "Frontend", "dist")));
+  res.sendFile(path.resolve(__dirname, "Frontend", "dist", "index.html"));
 });
 
 // POST route for user signup
