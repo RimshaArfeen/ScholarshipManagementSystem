@@ -18,6 +18,7 @@ import Scholarships from './Pages/Scholarships/Scholarships';
 import Register from './Pages/Register/Register';
 import Login from './Pages/Login/Login';
 
+
 function App() {
   useEffect(() => {
     AOS.init({

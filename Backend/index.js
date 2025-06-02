@@ -11,6 +11,9 @@ import JWT from "jsonwebtoken"
 import Admin from "./Schema/AdminSchema.js";
 import path from "path";
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+dotenv.config();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -18,7 +21,7 @@ const jwtKey = "jwtSecrectKey"
 const PORT = 3000;
 
 // Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/ScholarshipManagementSys")
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
 
