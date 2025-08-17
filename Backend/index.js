@@ -24,7 +24,8 @@ const PORT = 3000;
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
-
+// Add this line to your code temporarily
+console.log('Connecting with URI:', process.env.MONGODB_URI);
 // Initialize the Express app
 const app = express();
 
@@ -52,9 +53,12 @@ const upload = multer({ storage: storage })
 
 
 app.get("/", (req, res) => {
-  app.use(express.static(path.resolve(__dirname, "Frontend", "dist")));
-  res.sendFile(path.resolve(__dirname, "Frontend", "dist", "index.html"));
+  res.send("We are learning NodeJs ")
+  // app.use(express.static(path.resolve(__dirname, "Frontend", "dist")));
+  // res.sendFile(path.resolve(__dirname, "Frontend", "dist", "index.html"));
 });
+
+
 
 // POST route for user signup
 app.post('/signup', async (req, res) => {
