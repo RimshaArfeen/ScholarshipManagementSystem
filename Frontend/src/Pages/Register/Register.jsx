@@ -1,29 +1,58 @@
-
-import React from 'react'
-import Login from '../Login/Login'
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Login from "../Login/Login";
+import SignUp from "../SignUp/SignUp";
 
 const Register = () => {
-     return (
-          <section className='  py-24 px-5 '>
-               <div className='container mx-auto p-6 w-full lg:w-[85%] flex flex-col md:flex-row justify-between flex-wrap bg-gray-200'>
-                    <div className=' w-full md:w-3/4 mx-auto'>
-                         <h1 className=' w-fit mx-auto text-3xl heading-custom font-semibold capitalize text-center'>Login
-                              <div className=' w-full h-[2px] bg-amber-600 my-3 mb-4'></div>
+  const [isLogin, setIsLogin] = useState(true);
 
-                         </h1>
-                         <Login />
-                         <p className="text-center text-custom mt-4">
-                              Don't have an account?{" "}
-                              <a href="/signup" className="text-blue-600 hover:underline">
-                                   sign Up
-                              </a>
-                         </p>
-                    </div>
+  return (
+    <section className="w-full min-h-screen flex justify-center items-center bg-gradient-to-r from-gray-50 to-gray-100 px-5">
+      <div className="w-full md:w-3/4 lg:w-1/2 rounded-2xl p-8 relative overflow-hidden">
+        <AnimatePresence mode="wait">
+          {isLogin ? (
+            <motion.div
+              key="login"
+              initial={{ x: 100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -100, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <Login />
+              <p className="text-center text-gray-600 mt-4 text-sm">
+                Don’t have an account?{" "}
+                <button
+                  onClick={() => setIsLogin(false)}
+                  className="text-blue-600 hover:underline font-medium"
+                >
+                  Sign Up
+                </button>
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="signup"
+              initial={{ x: -100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 100, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <SignUp />
+              <p className="text-center text-gray-600 mt-4 text-sm">
+                Already have an account?{" "}
+                <button
+                  onClick={() => setIsLogin(true)}
+                  className="text-blue-600 hover:underline font-medium"
+                >
+                  Login
+                </button>
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </section>
+  );
+};
 
-               </div>
-
-          </section>
-     )
-}
-
-export default Register
+export default Register;

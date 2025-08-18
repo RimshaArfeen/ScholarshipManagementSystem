@@ -1,4 +1,6 @@
 
+
+
 import React from 'react';
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
@@ -50,107 +52,90 @@ const SignUp = () => {
     }
   };
   
-  return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md mt-20">
-        <h2 className=" w-fit mx-auto text-center text-2xl font-bold heading-custom mb-6">Sign Up
-          <div className='h-0.5 w-full bg-amber-600 my-1'></div>
-        </h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+ return (
+   <div className="min-h-screen w-full flex items-center justify-center px-4 py-24">
+  <div className="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md">
+    {/* Heading */}
+    <h2 className="text-center text-3xl font-semibold text-gray-800 mb-8">
+      Create an Account
+    </h2>
 
-          {/* Name Field */}
-          <div>
-            <label className="block text-custom">Name</label>
-            <input
-              type="text"
-              {...register("name", {
-                required: "Name is required",
-                minLength: {
-                  value: 4,
-                  message: "Minimum length is 4 characters",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "Maximum length is 20 characters",
-                },
-              })}
-              className="w-full px-4 py-2 border-customborder-teal-600 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 border-[1px] border-teal-500 text-sm"
-            />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
-          </div>
+    {/* Form */}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-          {/* Email Field */}
-          <div>
-            <label className="block text-custom">Email</label>
-            <input
-              type="email"
-              {...register("email", {
-                required: "Email is required",
-                minLength: {
-                  value: 4,
-                  message: "Minimum length is 4 characters",
-                },
-                pattern: {
-                  value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                  message: "Invalid email format. Must contain '@' and domain",
-                },
-              })}
-              className="w-full px-4 py-2 border-customborder-teal-600 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 border-[1px] border-teal-500 text-sm"
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
-          </div>
-
-          {/* Password Field */}
-          <div>
-            <label className="block text-custom">Password</label>
-            <input
-              type="password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long",
-                },
-              })}
-              className="w-full px-4 py-2 border-customborder-teal-600 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 border-[1px] border-teal-500 text-sm"
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
-          </div>
-
-          {/* Confirm Password Field */}
-          <div>
-            <label className="block text-custom">Confirm Password</label>
-            <input
-              type="password"
-              {...register("confirmPassword", {
-                required: "Please confirm your password",
-                validate: (value) =>
-                  value === password || "Passwords do not match",
-              })}
-              className="w-full px-4 py-2 border-customborder-teal-600 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 border-[1px] border-teal-500 text-sm"
-            />
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
-            )}
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition"
-          >
-            Sign Up
-          </button>
-        </form>
-
-        <p className="text-center text-custom mt-4">
-          Already have an account?{" "}
-          <a href="/" className="text-teal-600 hover:underline">
-            Log In
-          </a>
-        </p>
+      {/* Name */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+        <input
+          type="text"
+          {...register("name", { required: "Name is required" })}
+          className="w-full px-4 py-2 border rounded-lg text-gray-700 
+                     focus:ring-2 focus:ring-teal-500 focus:outline-none border-gray-300"
+        />
+        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
       </div>
-    </div>
+
+      {/* Email */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+        <input
+          type="email"
+          {...register("email", { required: "Email is required" })}
+          className="w-full px-4 py-2 border rounded-lg text-gray-700 
+                     focus:ring-2 focus:ring-teal-500 focus:outline-none border-gray-300"
+        />
+        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+      </div>
+
+      {/* Password */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        <input
+          type="password"
+          {...register("password", { required: "Password is required" })}
+          className="w-full px-4 py-2 border rounded-lg text-gray-700 
+                     focus:ring-2 focus:ring-teal-500 focus:outline-none border-gray-300"
+        />
+        {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+      </div>
+
+      {/* Confirm Password */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+        <input
+          type="password"
+          {...register("confirmPassword", {
+            required: "Please confirm your password",
+            validate: (value) => value === password || "Passwords do not match",
+          })}
+          className="w-full px-4 py-2 border rounded-lg text-gray-700 
+                     focus:ring-2 focus:ring-teal-500 focus:outline-none border-gray-300"
+        />
+        {errors.confirmPassword && (
+          <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>
+        )}
+      </div>
+
+      {/* Button */}
+      <button
+        type="submit"
+        className="w-full bg-teal-600 text-white py-2.5 rounded-lg font-medium 
+                   hover:bg-teal-700 transition duration-200 shadow-sm"
+      >
+        Sign Up
+      </button>
+    {/* Footer */}
+    <p className="text-center text-sm text-gray-600 mt-1">
+      Already have an account?{" "}
+      <a href="/" className="text-teal-600 hover:underline font-medium">
+        Log In
+      </a>
+    </p>
+    </form>
+
+  </div>
+</div>
+
   );
 };
 

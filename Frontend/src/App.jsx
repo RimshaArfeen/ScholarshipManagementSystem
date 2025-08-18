@@ -31,7 +31,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className='bg-custom'>
+      <div className='bg-gray-50'>
         <Navbar />
         <ScrollToTop />
         <Routes>
